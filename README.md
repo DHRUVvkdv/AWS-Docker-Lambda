@@ -14,3 +14,9 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 - `npx cdk synth` emits the synthesized CloudFormation template
 
 cdk init app --language typescript
+
+systemctl start docker
+docker build -t docker-image:test .
+docker run -p 9000:8080 docker-image:test
+In a new terminal:
+curl "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
