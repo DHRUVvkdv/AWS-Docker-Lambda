@@ -20,3 +20,8 @@ docker build -t docker-image:test .
 docker run -p 9000:8080 docker-image:test
 In a new terminal:
 curl "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
+
+in the root direc:
+cdk bootstrap --region us-east-1
+
+then cdk deploy

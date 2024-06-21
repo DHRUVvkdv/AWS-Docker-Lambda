@@ -1,16 +1,30 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
 
 export class AwsDockerLambdaStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
+    // Define the Docker image asset
+    const dockerFunction = new lambda.DockerImageFunction(this, 'DockerFunction', {
+      code: lambda.DockerImageCode.fromImageAsset('./image'),
+      memorySize: 1024,
+      timeout: cdk.Duration.seconds(10),
+      architecture: lambda.Architecture.ARM_64,
+    });
 
-    // example resource
-    // const queue = new sqs.Queue(this, 'AwsDockerLambdaQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    const functionUrl = dockerFunction.addFunctionUrl({
+      authType: lambda.FunctionUrlAuthType.NONE,
+      cors: {
+        allowedHeaders: ['*'],
+        allowedOrigins: ['*'],
+        allowedMethods: [lambda.HttpMethod.GET],
+      },
+      });
+
+      new cdk.CfnOutput(this, 'FunctionUrl', {
+        value: functionUrl.url,
+      });
   }
 }
